@@ -1,0 +1,35 @@
+name: Build macOS App
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install pyinstaller
+          # 만약 추가로 설치한 라이브러리가 있다면 여기에 적어주세요 (예: pip install pyautogui)
+
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller --noconsole --onedir main.py
+
+      - name: Compress app
+        run: |
+          cd dist
+          zip -r fishing_macro.zip main.app
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: macos-app
+          path: dist/fishing_macro.zip
